@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "playlist-creator"
+version = "0.1.0"
+description = "Create Apple Music playlists from markdown files"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "PyJWT>=2.8",
+    "cryptography>=41.0",
+]
+
+[project.scripts]
+playlist-creator = "playlist_creator.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-mock>=3.0",
+]
