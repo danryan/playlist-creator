@@ -1,0 +1,211 @@
+# Iconic MPC Producers
+
+Every pad hit that shaped hip hop — from the MPC60 to the MPC2000XL and beyond.
+
+- Gang Starr - Mass Appeal
+- Gang Starr ft. Inspectah Deck - Above the Clouds
+- Gang Starr - Full Clip
+- Gang Starr - Moment of Truth
+- Gang Starr - Blowin' Up the Spot
+- Gang Starr - Dat Supa Blend
+- Nas - N.Y. State of Mind
+- Nas - Represent
+- Notorious B.I.G. - Unbelievable
+- Notorious B.I.G. - Ten Crack Commandments
+- Notorious B.I.G. - Kick in the Door
+- Jay-Z - D'Evils
+- Jeru the Damaja - Come Clean
+- Rakim, Nas, KRS-One, Kanye - Classic
+- J Dilla - Won't Do
+- J Dilla - Workinonit
+- J Dilla - Last Donut of the Night
+- Slum Village - Fall in Love
+- Slum Village - Players
+- Slum Village - The Look of Love
+- The Pharcyde - Runnin'
+- The Pharcyde - Drop
+- Janet Jackson - Got 'Til It's Gone
+- J Dilla ft. Common & D'Angelo - So Far to Go
+- Common - The Light
+- De La Soul - Stakes Is High
+- Pete Rock & CL Smooth - They Reminisce Over You (T.R.O.Y.)
+- Pete Rock & CL Smooth - The Creator
+- Pete Rock & CL Smooth - Lots of Lovin
+- Pete Rock & CL Smooth - Take You There
+- Pete Rock & CL Smooth - It's a Love Thing
+- Pete Rock & CL Smooth - Fakin Jax
+- Pete Rock & CL Smooth - Give It to Y'all
+- Nas - The World Is Yours
+- Public Enemy - Shut 'Em Down (remix)
+- Pete Rock - Appreciate
+- Pete Rock - Trumaster
+- INI - Back on da Block
+- Mobb Deep - Shook Ones Pt. II
+- Mobb Deep - Survival of the Fittest
+- Mobb Deep - Quiet Storm
+- Mobb Deep - Temperature's Rising
+- Mobb Deep - Drop a Gem on 'Em
+- Mobb Deep ft. Big Noyd - Give Up the Goods
+- Mobb Deep - The Infamous
+- Mobb Deep - Animal Instinct
+- Mobb Deep - Hell on Earth (Front Lines)
+- DJ Shadow - Midnight in a Perfect World
+- DJ Shadow - Building Steam with a Grain of Salt
+- DJ Shadow - The Number Song
+- DJ Shadow - Organ Donor
+- DJ Shadow - Stem/Long Stem
+- DJ Shadow - Six Days
+- DJ Shadow ft. Run the Jewels - Nobody Speak
+- DJ Shadow - Fixed Income
+- DJ Shadow - Changeling/Transmission 1
+- DJ Shadow - In/Flux
+- Kanye West - Through the Wire
+- Kanye West - Jesus Walks
+- Kanye West - All Falls Down
+- Kanye West - Diamonds from Sierra Leone
+- Kanye West - Gone
+- Kanye West - Touch the Sky
+- Kanye West - Heard 'Em Say
+- Kanye West - Spaceship
+- Kanye West ft. Mos Def, Freeway, The Boys Choir of Harlem - Two Words
+- Kanye West - Family Business
+- Dr. Dre ft. Snoop Dogg - Still D.R.E.
+- Dr. Dre ft. Eminem - Forgot About Dre
+- Dr. Dre ft. Snoop Dogg - The Next Episode
+- Dr. Dre - Xxplosive
+- Dr. Dre - Nuthin' but a G Thang
+- Dr. Dre - Let Me Ride
+- Dr. Dre - Deep Cover
+- Dr. Dre - Lil' Ghetto Boy
+- Dr. Dre ft. Eminem & Xzibit - What's the Difference
+- Main Source - Fakin' the Funk
+- Main Source - Looking at the Front Door
+- Main Source ft. Nas, Akinyele, Joe Fatal - Live at the Barbeque
+- Large Professor - Ijuswannachill
+- A Tribe Called Quest - Electric Relaxation
+- A Tribe Called Quest - Award Tour
+- A Tribe Called Quest - Check the Rhime
+- A Tribe Called Quest - Scenario
+- A Tribe Called Quest - Can I Kick It?
+- Q-Tip - Vivrant Thing
+- Q-Tip - Breathe and Stop
+- Black Moon - How Many Emcees
+- Black Moon - Who Got da Props?
+- Smif-N-Wessun - Bucktown
+- Da Beatminerz - Wontime
+- O.C. - Time's Up
+- Big Pun - Twinz
+- Notorious B.I.G. - I Got a Story to Tell
+- Reflection Eternal - The Blast
+- Hi-Tek - Move Somethin'
+- Hi-Tek - Too Late
+- Hi-Tek - Express Yourself
+- Cypress Hill - How I Could Just Kill a Man
+- Cypress Hill - Insane in the Brain
+- Cypress Hill - Hand on the Pump
+- Cypress Hill - Throw Your Set in the Air
+- Lord Finesse - Hip 2 Da Game
+- Lord Finesse ft. Large Professor, Grand Puba, Sadat X - Actual Facts
+- Diamond D - Best Kept Secret
+- Diamond D - Sally Got a One Track Mind
+- Diamond D - I Went for Mine
+- De La Soul - Me Myself and I
+- De La Soul - The Magic Number
+- Gravediggaz - Diary of a Madman
+- DJ Spinna - Erotik Shiatzu
+- DJ Spinna - Watch Dees
+- DJ Spinna & Kev Brown - Heaven
+- Madvillain - Accordion
+- Madvillain - Meat Grinder
+- Madvillain - All Caps
+- Madvillain - Raid
+- Madvillain - Curls
+- Madvillain - Rhinestone Cowboy
+- Freddie Gibbs & Madlib - Thuggin'
+- Freddie Gibbs & Madlib - Knicks
+- Quasimoto - Slim's Return
+- Quasimoto - Bus Ride
+- Freddie Gibbs & Alchemist - Scottie Beam
+- Freddie Gibbs & Alchemist - 1985
+- Boldy James & Alchemist - E. Coli
+- Boldy James & Alchemist - Rubber Bands
+- Mobb Deep - Hold You Down
+- Jadakiss - We Gonna Make It
+- Armand Hammer & Alchemist - Robes
+- Earl Sweatshirt - Loose Change
+- Prodigy & Alchemist - Flying Car
+- MF DOOM - Doomsday
+- MF DOOM - Rhymes Like Dimes
+- MF DOOM - Rapp Snitch Knishes
+- MF DOOM - Hoe Cakes
+- MF DOOM - Tick, Tick…
+- MF DOOM - Arrow Root
+- MF DOOM - Nettle Leaves
+- Black Milk - Losing Out
+- Black Milk - Keep Going
+- Black Milk ft. Royce da 5'9" & Elzhi - Deadly Medley
+- Black Milk ft. Pharoahe Monch - Sound the Alarm
+- Black Milk - Long Story Short
+- Blu & Exile - My World Is…
+- Blu & Exile - Below the Heavens
+- Blu & Exile - No Greater Love
+- Fashawn - First Things First
+- Exile - Bread & Water
+- Flying Lotus ft. Kendrick Lamar - Never Catch Me
+- Flying Lotus - Do the Astral Plane
+- Flying Lotus - Zodiac Shit
+- Flying Lotus - MmmHmm
+- Flying Lotus - Coronus, the Terminator
+- Flying Lotus - Tea Leaf Dancers
+- Flying Lotus - GNG BNG
+- Flying Lotus - Camel
+- Karriem Riggins - Summer Madness
+- Karriem Riggins - Bahia Dreamin'
+- Karriem Riggins ft. Bilal - S.T.A.Y.
+- Kendrick Lamar - Momma
+- NxWorries - Suede
+- Knxwledge - Lyk Dis
+- NxWorries - Best One
+- Marco Polo ft. Masta Ace - Stand Up
+- Marco Polo ft. Masta Ace - Nostalgia
+- Marco Polo ft. Pharoahe Monch - War
+- Kev Brown - Always
+- Kev Brown - Beats N' Rhymes
+- Kev Brown - Cheers 2 U
+- Damu the Fudgemunk - Truly Get Yours
+- Damu the Fudgemunk - Public Squares
+- Oh No - Move
+- Oh No - The Ride
+- Gangrene - Elimination Chamber
+- The Roots - You Got Me
+- The Roots - The Seed 2.0
+- The Roots - Dynamite!
+- Nujabes ft. Cise Starr & Akin - Feather
+- Nujabes ft. Shing02 - Luv(sic) pt. 3
+- Nujabes - Aruarian Dance
+- Nujabes - Reflection Eternal
+- Nujabes ft. Cise Starr - Lady Brown
+- Nujabes - Counting Stars
+- Theo Parrish - Falling Up
+- Theo Parrish - Summertime Is Here
+- Theo Parrish - Moonlight Music
+- Moodymann - Don't You Want My Love
+- Moodymann - Shades of Jae
+- Moodymann - I Can't Kick This Feeling When It Hits
+- Westside Gunn - Brossface Brippler
+- Westside Gunn - Freddie HotSpot
+- Westside Gunn - 97 Hov
+- Benny the Butcher - Tana Talk
+- Benny the Butcher - Rubber Bands and Weight
+- Griselda - Dr. Birds
+- Conway the Machine - Lessie
+- Hermit and the Recluse - Ode to Sentience
+- Hermit and the Recluse - Sins of the Father
+- Roc Marciano - Snow Beach
+- Marlowe - The Goons
+- Marlowe - Lost
+- L'Orange & Jeremiah Jae - Underwater
+- L'Orange & Mr. Lif - The Mad Writer
+- araabMUZIK - Streetz Tonight
+- araabMUZIK - Make It Hard
+- araabMUZIK - Feel the Bass

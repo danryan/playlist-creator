@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from typing import Any
 
 import jwt
 import requests
@@ -93,8 +94,57 @@ class AppleMusicClient:
         playlist_data = resp.json()["data"][0]
         return playlist_data["id"]
 
+    def search_catalog(
+        self, query: str, limit: int = 10, types: str = "songs"
+    ) -> list[dict[str, Any]]:
+        """Search the Apple Music catalog. Returns a list of result dicts."""
+        url = f"{APPLE_MUSIC_API}/catalog/{self.config.storefront}/search"
+        params = {"term": query, "types": types, "limit": limit}
+        resp = requests.get(url, headers=self._headers(), params=params, timeout=30)
+        resp.raise_for_status()
+
+        data = resp.json()
+        results = []
+        for type_key in types.split(","):
+            type_key = type_key.strip()
+            items = data.get("results", {}).get(type_key, {}).get("data", [])
+            for item in items:
+                attrs = item.get("attributes", {})
+                results.append({
+                    "id": item["id"],
+                    "title": attrs.get("name", ""),
+                    "artist": attrs.get("artistName", ""),
+                    "album": attrs.get("albumName", ""),
+                    "duration_ms": attrs.get("durationInMillis", 0),
+                    "genres": attrs.get("genreNames", []),
+                    "release_date": attrs.get("releaseDate", ""),
+                    "url": attrs.get("url", ""),
+                })
+        return results
+
+    def list_playlists(self) -> list[dict[str, Any]]:
+        """List the user's library playlists."""
+        url = f"{APPLE_MUSIC_API}/me/library/playlists"
+        resp = requests.get(
+            url,
+            headers=self._headers(include_user_token=True),
+            timeout=30,
+        )
+        resp.raise_for_status()
+
+        data = resp.json()
+        playlists = []
+        for item in data.get("data", []):
+            attrs = item.get("attributes", {})
+            playlists.append({
+                "id": item["id"],
+                "name": attrs.get("name", ""),
+                "track_count": attrs.get("playParams", {}).get("trackCount", 0),
+            })
+        return playlists
+
     def add_tracks_to_playlist(
-        self, playlist_id: str, track_ids: list[dict]
+        self, playlist_id: str, track_ids: list[dict[str, str]]
     ) -> None:
         """Add tracks to a library playlist.
 

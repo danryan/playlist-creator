@@ -6,3 +6,14 @@ build/
 .pytest_cache/
 .env
 *.pem
+*.p8
+apple-music-token.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Poetry
+poetry.lock

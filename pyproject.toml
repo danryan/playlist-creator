@@ -1,23 +1,32 @@
-[build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "playlist-creator"
 version = "0.1.0"
 description = "Create Apple Music playlists from markdown files"
-requires-python = ">=3.10"
-dependencies = [
-    "requests>=2.31",
-    "PyJWT>=2.8",
-    "cryptography>=41.0",
-]
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "playlist_creator"}]
 
-[project.scripts]
+[tool.poetry.dependencies]
+python = "^3.10"
+cryptography = "^41.0"
+mcp = {version = "*", optional = true}
+PyJWT = "^2.8"
+python-dotenv = "^1.2.2"
+requests = "^2.31"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-mock = "^3.0"
+
+[tool.poetry.extras]
+mcp = ["mcp"]
+
+[tool.poetry.scripts]
 playlist-creator = "playlist_creator.cli:main"
+playlist-creator-mcp = "playlist_creator.mcp_server:main"
+generate-token = "generate_apple_music_token:main"
+generate-token-save = "generate_token_save:main"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-mock>=3.0",
-]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

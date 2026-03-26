@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music User Token</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      max-width: 540px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #1d1d1f;
+      line-height: 1.5;
+    }
+    h1 { font-size: 1.4em; margin-bottom: 8px; }
+    p.desc { color: #6e6e73; font-size: 0.9em; margin-bottom: 24px; }
+    label { display: block; font-weight: 600; font-size: 0.85em; margin-bottom: 6px; }
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 0.8em;
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: #0071e3; }
+    button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: #0071e3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95em;
+      cursor: pointer;
+    }
+    button:hover { background: #0077ed; }
+    button:disabled { background: #d2d2d7; cursor: not-allowed; }
+    #status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85em;
+      display: none;
+    }
+    #status.info { display: block; background: #f0f0f5; color: #1d1d1f; }
+    #status.success { display: block; background: #e8f5e2; color: #1a7a1a; }
+    #status.error { display: block; background: #fde8e8; color: #c41e1e; }
+    #token-output {
+      margin-top: 16px;
+      display: none;
+    }
+    #token-output label { margin-bottom: 6px; }
+    #token-output textarea {
+      height: 120px;
+      background: #f5f5f7;
+    }
+    .copy-btn {
+      margin-top: 8px;
+      padding: 6px 14px;
+      background: #1d1d1f;
+      font-size: 0.85em;
+    }
+    .copy-btn:hover { background: #333; }
+    .hint {
+      margin-top: 20px;
+      padding: 12px;
+      background: #f5f5f7;
+      border-radius: 8px;
+      font-size: 0.8em;
+      color: #6e6e73;
+    }
+    .hint code {
+      background: #e8e8ed;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Apple Music User Token</h1>
+  <p class="desc">Sign in with your Apple ID to get a Music User Token for API access.</p>
+
+  <label for="dev-token">Developer Token (JWT)</label>
+  <textarea id="dev-token" placeholder="eyJ..."></textarea>
+
+  <button id="auth-btn" onclick="authorize()">Authorize with Apple Music</button>
+
+  <div id="status"></div>
+
+  <div id="token-output">
+    <label for="user-token">Music User Token</label>
+    <textarea id="user-token" readonly></textarea>
+    <button class="copy-btn" onclick="copyToken()">Copy to clipboard</button>
+  </div>
+
+  <div class="hint">
+    <strong>Generate your developer token first:</strong><br><br>
+    <code>python -c "from playlist_creator.apple_music import AppleMusicClient; c = AppleMusicClient(); print(c._generate_token())"</code><br><br>
+    Or set env vars and run your existing CLI to print it. Paste the JWT above, then click Authorize. The user token is valid for ~6 months.
+  </div>
+
+  <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"
+          data-web-components
+          crossorigin></script>
+
+  <script>
+    function setStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = type;
+    }
+
+    async function authorize() {
+      const devToken = document.getElementById('dev-token').value.trim();
+      if (!devToken) {
+        setStatus('Paste your developer token (JWT) first.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('auth-btn');
+      btn.disabled = true;
+      setStatus('Configuring MusicKit...', 'info');
+
+      try {
+        await MusicKit.configure({
+          developerToken: devToken,
+          app: {
+            name: 'playlist-creator',
+            build: '1.0.0'
+          }
+        });
+
+        const music = MusicKit.getInstance();
+        setStatus('Waiting for Apple ID sign-in...', 'info');
+
+        const userToken = await music.authorize();
+
+        document.getElementById('user-token').value = userToken;
+        document.getElementById('token-output').style.display = 'block';
+        setStatus('Authorized. Copy the token below.', 'success');
+      } catch (err) {
+        setStatus('Authorization failed: ' + (err.message || err), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function copyToken() {
+      const tokenEl = document.getElementById('user-token');
+      tokenEl.select();
+      navigator.clipboard.writeText(tokenEl.value).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+      });
+    }
+  </script>
+</body>
+</html>

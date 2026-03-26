@@ -7,8 +7,12 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from .apple_music import AppleMusicClient, AppleMusicConfig
 from .parser import Track, parse_markdown
+
+load_dotenv()
 
 
 def _get_env(name: str) -> str:
@@ -20,21 +24,21 @@ def _get_env(name: str) -> str:
 
 
 def _build_client() -> AppleMusicClient:
-    key_path = os.environ.get("APPLE_MUSIC_PRIVATE_KEY_PATH")
-    private_key = os.environ.get("APPLE_MUSIC_PRIVATE_KEY")
+    key_path = os.environ.get("APPLE_PRIVATE_KEY_PATH")
+    private_key = os.environ.get("APPLE_PRIVATE_KEY")
 
     if key_path:
-        private_key = Path(key_path).read_text(encoding="utf-8")
+        private_key = Path(os.path.expanduser(key_path)).read_text(encoding="utf-8")
     elif not private_key:
         print(
-            "Error: APPLE_MUSIC_PRIVATE_KEY or APPLE_MUSIC_PRIVATE_KEY_PATH required",
+            "Error: APPLE_PRIVATE_KEY or APPLE_PRIVATE_KEY_PATH required",
             file=sys.stderr,
         )
         sys.exit(1)
 
     config = AppleMusicConfig(
-        team_id=_get_env("APPLE_MUSIC_TEAM_ID"),
-        key_id=_get_env("APPLE_MUSIC_KEY_ID"),
+        team_id=_get_env("APPLE_TEAM_ID"),
+        key_id=_get_env("APPLE_KEY_ID"),
         private_key=private_key,
         storefront=os.environ.get("APPLE_MUSIC_STOREFRONT", "us"),
     )
