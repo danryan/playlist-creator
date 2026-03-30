@@ -99,8 +99,14 @@ def test_create_playlist(mock_post, client):
     assert call_kwargs.kwargs["json"]["attributes"]["name"] == "Test Playlist"
 
 
+@patch("playlist_creator.apple_music.requests.get")
 @patch("playlist_creator.apple_music.requests.post")
-def test_add_tracks_to_playlist(mock_post, client):
+def test_add_tracks_to_playlist(mock_post, mock_get, client):
+    # Mock GET for get_playlist_tracks (returns empty playlist)
+    mock_get_resp = MagicMock()
+    mock_get_resp.status_code = 404
+    mock_get.return_value = mock_get_resp
+
     mock_resp = MagicMock()
     mock_resp.raise_for_status = MagicMock()
     mock_post.return_value = mock_resp

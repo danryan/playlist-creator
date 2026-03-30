@@ -103,15 +103,21 @@ class TestCreatePlaylist:
 
 
 class TestAddToPlaylist:
+    @patch("playlist_creator.apple_music.requests.get")
     @patch("playlist_creator.apple_music.requests.post")
-    def test_adds_songs(self, mock_post, mock_env):
+    def test_adds_songs(self, mock_post, mock_get, mock_env):
+        # Mock GET for get_playlist_tracks (returns empty playlist)
+        mock_get_resp = MagicMock()
+        mock_get_resp.status_code = 404
+        mock_get.return_value = mock_get_resp
+
         mock_resp = MagicMock()
         mock_resp.raise_for_status = MagicMock()
         mock_post.return_value = mock_resp
 
         result = add_to_playlist("p.abc123", ["111", "222", "333"])
         assert result["added"] == 3
-        assert result["failed"] == []
+        assert result["skipped"] == 0
 
         call_kwargs = mock_post.call_args
         sent_data = call_kwargs.kwargs["json"]["data"]

@@ -122,6 +122,67 @@ class AppleMusicClient:
                 })
         return results
 
+    def get_artist_top_songs(
+        self, artist_name: str, limit: int = 20, lead_artist_only: bool = True
+    ) -> dict[str, Any]:
+        """Search for an artist by name, then fetch their top songs.
+
+        Returns a dict with artist info and a list of top songs.
+        """
+        # Step 1: Search for the artist
+        url = f"{APPLE_MUSIC_API}/catalog/{self.config.storefront}/search"
+        params = {"term": artist_name, "types": "artists", "limit": 1}
+        resp = requests.get(url, headers=self._headers(), params=params, timeout=30)
+        resp.raise_for_status()
+
+        data = resp.json()
+        artists = data.get("results", {}).get("artists", {}).get("data", [])
+        if not artists:
+            return {"artist": None, "songs": []}
+
+        artist = artists[0]
+        artist_id = artist["id"]
+        artist_attrs = artist.get("attributes", {})
+
+        # Step 2: Fetch top songs
+        top_songs_url = (
+            f"{APPLE_MUSIC_API}/catalog/{self.config.storefront}"
+            f"/artists/{artist_id}/view/top-songs"
+        )
+        params = {"limit": limit}
+        resp = requests.get(
+            top_songs_url, headers=self._headers(), params=params, timeout=30
+        )
+        resp.raise_for_status()
+
+        songs_data = resp.json()
+        matched_name = artist_attrs.get("name", "").lower()
+        songs = []
+        for item in songs_data.get("data", []):
+            attrs = item.get("attributes", {})
+            song_artist = attrs.get("artistName", "")
+            if lead_artist_only and not song_artist.lower().startswith(matched_name):
+                continue
+            songs.append({
+                "id": item["id"],
+                "title": attrs.get("name", ""),
+                "artist": song_artist,
+                "album": attrs.get("albumName", ""),
+                "duration_ms": attrs.get("durationInMillis", 0),
+                "genres": attrs.get("genreNames", []),
+                "release_date": attrs.get("releaseDate", ""),
+                "url": attrs.get("url", ""),
+            })
+
+        return {
+            "artist": {
+                "id": artist_id,
+                "name": artist_attrs.get("name", ""),
+                "url": artist_attrs.get("url", ""),
+            },
+            "songs": songs,
+        }
+
     def list_playlists(self) -> list[dict[str, Any]]:
         """List the user's library playlists."""
         url = f"{APPLE_MUSIC_API}/me/library/playlists"
@@ -143,19 +204,69 @@ class AppleMusicClient:
             })
         return playlists
 
+    def get_playlist_tracks(self, playlist_id: str) -> list[dict[str, Any]]:
+        """Get all tracks in a library playlist."""
+        url = f"{APPLE_MUSIC_API}/me/library/playlists/{playlist_id}/tracks"
+        tracks: list[dict[str, Any]] = []
+        params: dict[str, Any] = {}
+
+        while True:
+            resp = requests.get(
+                url,
+                headers=self._headers(include_user_token=True),
+                params=params,
+                timeout=30,
+            )
+            if resp.status_code == 404:
+                return tracks
+            resp.raise_for_status()
+            data = resp.json()
+
+            for item in data.get("data", []):
+                attrs = item.get("attributes", {})
+                catalog_id = attrs.get("playParams", {}).get("catalogId", "")
+                tracks.append({
+                    "id": item["id"],
+                    "catalog_id": catalog_id,
+                    "title": attrs.get("name", ""),
+                    "artist": attrs.get("artistName", ""),
+                    "album": attrs.get("albumName", ""),
+                    "duration_ms": attrs.get("durationInMillis", 0),
+                    "track_number": attrs.get("trackNumber", 0),
+                })
+
+            next_url = data.get("next")
+            if not next_url:
+                break
+            url = f"https://api.music.apple.com{next_url}"
+            params = {}
+
+        return tracks
+
     def add_tracks_to_playlist(
         self, playlist_id: str, track_ids: list[dict[str, str]]
-    ) -> None:
-        """Add tracks to a library playlist.
+    ) -> dict[str, list[dict[str, str]]]:
+        """Add tracks to a library playlist, skipping duplicates.
 
         track_ids: list of {"id": "<catalog-id>", "type": "songs"} dicts.
+
+        Returns a dict with "added" and "skipped" lists.
         """
-        url = f"{APPLE_MUSIC_API}/me/library/playlists/{playlist_id}/tracks"
-        body = {"data": track_ids}
-        resp = requests.post(
-            url,
-            headers=self._headers(include_user_token=True),
-            json=body,
-            timeout=30,
-        )
-        resp.raise_for_status()
+        existing = self.get_playlist_tracks(playlist_id)
+        existing_catalog_ids = {t["catalog_id"] for t in existing if t.get("catalog_id")}
+
+        to_add = [t for t in track_ids if t["id"] not in existing_catalog_ids]
+        skipped = [t for t in track_ids if t["id"] in existing_catalog_ids]
+
+        if to_add:
+            url = f"{APPLE_MUSIC_API}/me/library/playlists/{playlist_id}/tracks"
+            body = {"data": to_add}
+            resp = requests.post(
+                url,
+                headers=self._headers(include_user_token=True),
+                json=body,
+                timeout=30,
+            )
+            resp.raise_for_status()
+
+        return {"added": to_add, "skipped": skipped}
