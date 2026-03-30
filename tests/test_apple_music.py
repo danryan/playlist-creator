@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from playlist_creator.apple_music import AppleMusicClient
-from playlist_creator.auth import AppleMusicAuth, AppleMusicConfig
+from apple_music_mcp.apple_music import AppleMusicClient
+from apple_music_mcp.auth import AppleMusicAuth, AppleMusicConfig
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ def test_developer_token_cached(auth):
     assert token1 == token2
 
 
-@patch("playlist_creator.apple_music.requests.get")
+@patch("apple_music_mcp.apple_music.requests.get")
 def test_search_track_found(mock_get, client):
     mock_resp = MagicMock()
     mock_resp.json.return_value = {
@@ -78,7 +78,7 @@ def test_search_track_found(mock_get, client):
     assert result["id"] == "123"
 
 
-@patch("playlist_creator.apple_music.requests.get")
+@patch("apple_music_mcp.apple_music.requests.get")
 def test_search_track_not_found(mock_get, client):
     mock_resp = MagicMock()
     mock_resp.json.return_value = {"results": {}}
@@ -89,7 +89,7 @@ def test_search_track_not_found(mock_get, client):
     assert result is None
 
 
-@patch("playlist_creator.apple_music.requests.post")
+@patch("apple_music_mcp.apple_music.requests.post")
 def test_create_playlist(mock_post, client):
     mock_resp = MagicMock()
     mock_resp.json.return_value = {
@@ -105,8 +105,8 @@ def test_create_playlist(mock_post, client):
     assert call_kwargs.kwargs["json"]["attributes"]["name"] == "Test Playlist"
 
 
-@patch("playlist_creator.apple_music.requests.get")
-@patch("playlist_creator.apple_music.requests.post")
+@patch("apple_music_mcp.apple_music.requests.get")
+@patch("apple_music_mcp.apple_music.requests.post")
 def test_add_tracks_to_playlist(mock_post, mock_get, client):
     # Mock GET for get_playlist_tracks (returns empty playlist)
     mock_get_resp = MagicMock()

@@ -1,8 +1,20 @@
-# playlist-creator
+# apple-music-mcp
 
-Create Apple Music playlists from markdown files. Write your playlist as a simple markdown list, and this tool searches Apple Music for each track and adds them to a new playlist in your library.
+Apple Music MCP server and CLI — search the catalog, manage playlists, create playlists from markdown files, and more.
 
-## Markdown Format
+## MCP Server
+
+```bash
+poetry run apple-music-mcp
+```
+
+Runs on stdio. Exposes tools for searching the Apple Music catalog, creating and managing playlists, and more. See `CLAUDE.md` for the full tool list.
+
+## CLI: Markdown to Playlist
+
+Write your playlist as a simple markdown list, and the CLI searches Apple Music for each track and adds them to a new playlist in your library.
+
+### Markdown Format
 
 ```markdown
 # My Playlist Name
@@ -15,33 +27,15 @@ Optional description text.
 
 Supports bullet lists (`-`, `*`), numbered lists (`1.`), bare lines, and em/en dash separators.
 
-## Installation
+### Usage
 
-```bash
-pip install .
-```
-
-## Usage
-
-### Preview tracks (no API calls)
+Preview tracks (no API calls):
 
 ```bash
 playlist-creator playlist.md --dry-run
 ```
 
-### Create a playlist
-
-Set the required environment variables:
-
-```bash
-export APPLE_MUSIC_TEAM_ID=your_team_id
-export APPLE_MUSIC_KEY_ID=your_key_id
-export APPLE_MUSIC_PRIVATE_KEY_PATH=/path/to/AuthKey_XXXXXX.p8
-export APPLE_MUSIC_USER_TOKEN=your_user_token
-export APPLE_MUSIC_STOREFRONT=us  # optional, defaults to us
-```
-
-Then run:
+Create a playlist:
 
 ```bash
 playlist-creator playlist.md -v
@@ -56,6 +50,22 @@ playlist-creator playlist.md -v
 | `-d, --description` | Override the playlist description |
 | `-v, --verbose` | Show detailed search results |
 
+## Setup
+
+```bash
+poetry install
+```
+
+Set the required environment variables (see `CLAUDE.md` for details):
+
+```bash
+export APPLE_TEAM_ID=your_team_id
+export APPLE_KEY_ID=your_key_id
+export APPLE_PRIVATE_KEY_PATH=/path/to/AuthKey_XXXXXX.p8
+export APPLE_MUSIC_USER_TOKEN=your_user_token
+export APPLE_MUSIC_STOREFRONT=us  # optional, defaults to us
+```
+
 ## Getting Apple Music Credentials
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/)
@@ -67,6 +77,5 @@ playlist-creator playlist.md -v
 ## Running Tests
 
 ```bash
-pip install -e ".[dev]"
-pytest
+poetry run pytest
 ```

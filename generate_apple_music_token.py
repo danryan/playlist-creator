@@ -8,7 +8,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from playlist_creator.auth import AppleMusicConfig
+from apple_music_mcp.auth import AppleMusicConfig
 
 load_dotenv()
 

@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import playlist_creator.mcp_server as mcp_mod
-from playlist_creator.mcp_server import (
+import apple_music_mcp.mcp_server as mcp_mod
+from apple_music_mcp.mcp_server import (
     add_to_playlist,
     create_playlist,
     create_playlist_from_markdown,
@@ -44,7 +44,7 @@ def mock_env(monkeypatch):
 
 
 class TestSearchCatalog:
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_returns_results(self, mock_get, mock_env):
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
@@ -78,7 +78,7 @@ class TestSearchCatalog:
         assert result["results"][0]["title"] == "Rhubarb"
         assert result["results"][0]["duration_ms"] == 312000
 
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_empty_results(self, mock_get, mock_env):
         mock_resp = MagicMock()
         mock_resp.json.return_value = {"results": {}}
@@ -97,7 +97,7 @@ class TestSearchCatalog:
 
 
 class TestCreatePlaylist:
-    @patch("playlist_creator.apple_music.requests.post")
+    @patch("apple_music_mcp.apple_music.requests.post")
     def test_creates_playlist(self, mock_post, mock_env):
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
@@ -112,8 +112,8 @@ class TestCreatePlaylist:
 
 
 class TestAddToPlaylist:
-    @patch("playlist_creator.apple_music.requests.get")
-    @patch("playlist_creator.apple_music.requests.post")
+    @patch("apple_music_mcp.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.post")
     def test_adds_songs(self, mock_post, mock_get, mock_env):
         # Mock GET for get_playlist_tracks (returns empty playlist)
         mock_get_resp = MagicMock()
@@ -135,7 +135,7 @@ class TestAddToPlaylist:
 
 
 class TestListPlaylists:
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_lists_playlists(self, mock_get, mock_env):
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
@@ -159,8 +159,8 @@ class TestListPlaylists:
 
 
 class TestCreatePlaylistFromMarkdown:
-    @patch("playlist_creator.apple_music.requests.post")
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.post")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_full_flow(self, mock_get, mock_post, mock_env):
         # Mock search returning results for each track
         search_resp = MagicMock()
@@ -211,7 +211,7 @@ class TestCreatePlaylistFromMarkdown:
         assert result["playlist_name"] == "Test Playlist"
         assert len(result["matched"]) == 2
 
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_dry_run(self, mock_get, mock_env):
         search_resp = MagicMock()
         search_resp.json.return_value = {
@@ -247,7 +247,7 @@ class TestCreatePlaylistFromMarkdown:
         assert len(result["matched"]) == 1
         assert "playlist_id" not in result
 
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_no_matches(self, mock_get, mock_env):
         mock_resp = MagicMock()
         mock_resp.json.return_value = {"results": {}}
@@ -264,7 +264,7 @@ class TestCreatePlaylistFromMarkdown:
 
 
 class TestErrorHandling:
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_401_error(self, mock_get, mock_env):
         import requests
 
@@ -278,7 +278,7 @@ class TestErrorHandling:
         with pytest.raises(ValueError, match="User token expired"):
             search_catalog("test")
 
-    @patch("playlist_creator.apple_music.requests.get")
+    @patch("apple_music_mcp.apple_music.requests.get")
     def test_429_error(self, mock_get, mock_env):
         import requests
 

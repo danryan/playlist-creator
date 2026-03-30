@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "playlist-creator"
+name = "apple-music-mcp"
 version = "0.1.0"
-description = "Create Apple Music playlists from markdown files"
+description = "Apple Music MCP server and CLI — search catalog, manage playlists, and more"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "playlist_creator"}]
+packages = [{include = "apple_music_mcp"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -22,8 +22,8 @@ pytest-mock = "^3.0"
 mcp = ["mcp"]
 
 [tool.poetry.scripts]
-playlist-creator = "playlist_creator.cli:main"
-playlist-creator-mcp = "playlist_creator.mcp_server:main"
+playlist-creator = "apple_music_mcp.cli:main"
+apple-music-mcp = "apple_music_mcp.mcp_server:main"
 generate-token = "generate_apple_music_token:main"
 generate-token-save = "generate_token_save:main"
 
