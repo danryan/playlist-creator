@@ -1,6 +1,6 @@
 """Tests for markdown playlist parser."""
 
-from playlist_creator.parser import Track, parse_markdown_text
+from apple_music_mcp.parser import Track, parse_markdown_text
 
 
 def test_basic_playlist():

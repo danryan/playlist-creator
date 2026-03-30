@@ -1,17 +1,17 @@
-# playlist-creator
+# apple-music-mcp
 
-Apple Music playlist creator — CLI tool and MCP server for searching the Apple Music catalog and managing playlists.
+Apple Music MCP server and CLI — search the catalog, manage playlists, and more.
 
 ## Project structure
 
 ```
-playlist_creator/
+apple_music_mcp/
   __init__.py
   auth.py             # AppleMusicAuth — JWT token generation and auth headers
   apple_music.py      # AppleMusicClient — catalog search, playlist CRUD
   parser.py           # Markdown parser — extracts playlist name, description, tracks
   mcp_server.py       # MCP server (FastMCP, stdio transport) wrapping AppleMusicClient
-  cli.py              # CLI entry point
+  cli.py              # CLI entry point for markdown-to-playlist
 tests/
   test_parser.py      # Parser unit tests
   test_apple_music.py # API client tests (mocked)
@@ -51,20 +51,20 @@ User token requires interactive browser auth — open `get_user_token.html`, pas
 
 ## Running
 
-### CLI
+### MCP server
+
+```bash
+poetry run apple-music-mcp
+```
+
+Runs on stdio. Configure in Claude Desktop or Claude Code as an MCP server.
+
+### CLI (markdown-to-playlist)
 
 ```bash
 poetry run playlist-creator examples/road_trip.md --dry-run   # preview only
 poetry run playlist-creator examples/road_trip.md -v           # create playlist
 ```
-
-### MCP server
-
-```bash
-poetry run playlist-creator-mcp
-```
-
-Runs on stdio. Configure in Claude Desktop or Claude Code as an MCP server.
 
 ### MCP tools
 

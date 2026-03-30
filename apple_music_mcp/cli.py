@@ -1,4 +1,4 @@
-"""CLI entry point for playlist-creator."""
+"""CLI entry point for creating playlists from markdown files."""
 
 from __future__ import annotations
 

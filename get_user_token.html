@@ -102,7 +102,7 @@
 
   <div class="hint">
     <strong>Generate your developer token first:</strong><br><br>
-    <code>python -c "from playlist_creator.apple_music import AppleMusicClient; c = AppleMusicClient(); print(c._generate_token())"</code><br><br>
+    <code>poetry run generate-token</code><br><br>
     Or set env vars and run your existing CLI to print it. Paste the JWT above, then click Authorize. The user token is valid for ~6 months.
   </div>
 
@@ -132,7 +132,7 @@
         await MusicKit.configure({
           developerToken: devToken,
           app: {
-            name: 'playlist-creator',
+            name: 'apple-music-mcp',
             build: '1.0.0'
           }
         });
