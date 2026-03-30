@@ -93,6 +93,14 @@ poetry run playlist-creator examples/road_trip.md -v           # create playlist
 
 ## Testing
 
+Follow **test-driven development (TDD)** — red, green, refactor:
+
+1. **Red**: Write a failing test first, before writing any feature code. Run `poetry run pytest` to confirm it fails.
+2. **Green**: Write the minimum code to make the test pass. Run tests again to confirm.
+3. **Refactor**: Clean up the code while keeping tests green. Run tests after every change.
+
+Run tests early and often — before starting work, after each change, and before committing.
+
 ```bash
 poetry run pytest
 ```
