@@ -17,3 +17,6 @@ ENV/
 
 # Poetry
 poetry.lock
+
+# Claude Code local settings
+.claude/settings.local.json
