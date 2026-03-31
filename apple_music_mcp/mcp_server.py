@@ -40,10 +40,7 @@ def _get_client() -> AppleMusicClient:
     private_key = os.environ.get("APPLE_PRIVATE_KEY")
 
     if key_path:
-        path = key_path
-        if path.startswith("~/"):
-            path = os.path.expanduser(path)
-        private_key = Path(path).read_text(encoding="utf-8")
+        private_key = Path(key_path).expanduser().read_text(encoding="utf-8")
     elif not private_key:
         raise ValueError(
             "Missing required env var: APPLE_PRIVATE_KEY or APPLE_PRIVATE_KEY_PATH"
@@ -67,7 +64,9 @@ def _handle_api_error(e: Exception) -> str:
     if isinstance(e, requests.HTTPError) and e.response is not None:
         status = e.response.status_code
         if status == 401:
-            return "User token expired. Re-run get_user_token.html to obtain a new token."
+            return (
+                "User token expired. Re-run get_user_token.html to obtain a new token."
+            )
         if status == 403:
             return "Forbidden. Check Apple Music subscription status."
         if status == 429:
@@ -77,7 +76,9 @@ def _handle_api_error(e: Exception) -> str:
 
 
 @mcp.tool()
-def search_catalog(query: str, limit: int = 10, types: str = "songs") -> dict[str, object]:
+def search_catalog(
+    query: str, limit: int = 10, types: str = "songs"
+) -> dict[str, object]:
     """Search the Apple Music catalog for songs, albums, or artists.
 
     Args:
@@ -93,11 +94,13 @@ def search_catalog(query: str, limit: int = 10, types: str = "songs") -> dict[st
         return {"results": results}
     except Exception as e:
         logger.error("search_catalog failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
-def get_artist_top_songs(artist: str, limit: int = 20, lead_artist_only: bool = True) -> dict[str, object]:
+def get_artist_top_songs(
+    artist: str, limit: int = 20, lead_artist_only: bool = True
+) -> dict[str, object]:
     """Get an artist's top songs on Apple Music, sorted by popularity.
 
     Searches for the artist by name, then returns their most popular tracks
@@ -106,12 +109,21 @@ def get_artist_top_songs(artist: str, limit: int = 20, lead_artist_only: bool = 
     Args:
         artist: Artist name to search for.
         limit: Maximum number of top songs to return (default 20).
-        lead_artist_only: If true (default), only return songs where the artist is the lead. If false, include songs where the artist is featured.
+        lead_artist_only: If true (default), only return songs where the
+            artist is the lead. If false, include songs where the artist
+            is featured.
     """
-    logger.info("get_artist_top_songs artist=%r limit=%d lead_artist_only=%s", artist, limit, lead_artist_only)
+    logger.info(
+        "get_artist_top_songs artist=%r limit=%d lead_artist_only=%s",
+        artist,
+        limit,
+        lead_artist_only,
+    )
     try:
         client = _get_client()
-        result = client.get_artist_top_songs(artist, limit=limit, lead_artist_only=lead_artist_only)
+        result = client.get_artist_top_songs(
+            artist, limit=limit, lead_artist_only=lead_artist_only
+        )
         if result["artist"] is None:
             logger.warning("get_artist_top_songs: artist not found for %r", artist)
             return {"error": f"Artist not found: {artist}"}
@@ -123,7 +135,7 @@ def get_artist_top_songs(artist: str, limit: int = 20, lead_artist_only: bool = 
         return result
     except Exception as e:
         logger.error("get_artist_top_songs failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -142,7 +154,7 @@ def create_playlist(name: str, description: str = "") -> dict[str, object]:
         return {"id": playlist_id, "name": name}
     except Exception as e:
         logger.error("create_playlist failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -168,7 +180,7 @@ def add_to_playlist(playlist_id: str, song_ids: list[str]) -> dict[str, object]:
         }
     except Exception as e:
         logger.error("add_to_playlist failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -182,7 +194,7 @@ def list_playlists() -> dict[str, object]:
         return {"playlists": playlists}
     except Exception as e:
         logger.error("list_playlists failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -190,11 +202,14 @@ def search_playlist(
     playlist_id: str,
     query: str,
 ) -> dict[str, object]:
-    """Search for a song within an existing playlist by matching against track title, artist, or album.
+    """Search for a song within an existing playlist.
+
+    Matches against track title, artist, or album.
 
     Args:
         playlist_id: The library playlist ID to search within.
-        query: Search string to match against song title, artist, or album name (case-insensitive).
+        query: Search string to match against song title, artist,
+            or album name (case-insensitive).
     """
     logger.info("search_playlist playlist_id=%s query=%r", playlist_id, query)
     try:
@@ -202,16 +217,21 @@ def search_playlist(
         tracks = client.get_playlist_tracks(playlist_id)
         query_lower = query.lower()
         matches = [
-            t for t in tracks
+            t
+            for t in tracks
             if query_lower in t.get("title", "").lower()
             or query_lower in t.get("artist", "").lower()
             or query_lower in t.get("album", "").lower()
         ]
-        logger.info("search_playlist found %d matches out of %d tracks", len(matches), len(tracks))
+        logger.info(
+            "search_playlist found %d matches out of %d tracks",
+            len(matches),
+            len(tracks),
+        )
         return {"matches": matches, "total_tracks": len(tracks)}
     except Exception as e:
         logger.error("search_playlist failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -232,7 +252,7 @@ def get_playlist_tracks(playlist_id: str, limit: int = 100) -> dict[str, object]
         return {"tracks": tracks, "total": len(tracks)}
     except Exception as e:
         logger.error("get_playlist_tracks failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -256,7 +276,7 @@ def search_library(
         return {"results": results}
     except Exception as e:
         logger.error("search_library failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -275,7 +295,7 @@ def get_library_songs(limit: int = 25, offset: int = 0) -> dict[str, object]:
         return {"songs": songs}
     except Exception as e:
         logger.error("get_library_songs failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -294,7 +314,7 @@ def get_library_albums(limit: int = 25, offset: int = 0) -> dict[str, object]:
         return {"albums": albums}
     except Exception as e:
         logger.error("get_library_albums failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -313,7 +333,7 @@ def get_library_artists(limit: int = 25, offset: int = 0) -> dict[str, object]:
         return {"artists": artists}
     except Exception as e:
         logger.error("get_library_artists failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -333,7 +353,7 @@ def get_recently_played(limit: int = 10) -> dict[str, object]:
         return {"items": items}
     except Exception as e:
         logger.error("get_recently_played failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -353,7 +373,7 @@ def get_recommendations(limit: int = 5) -> dict[str, object]:
         return {"recommendations": recs}
     except Exception as e:
         logger.error("get_recommendations failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -375,7 +395,7 @@ def get_song_details(song_id: str) -> dict[str, object]:
         return {"song": result}
     except Exception as e:
         logger.error("get_song_details failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -397,7 +417,7 @@ def get_album_details(album_id: str) -> dict[str, object]:
         return {"album": result}
     except Exception as e:
         logger.error("get_album_details failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -418,7 +438,7 @@ def get_artist_details(artist_id: str) -> dict[str, object]:
         return {"artist": result}
     except Exception as e:
         logger.error("get_artist_details failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -429,7 +449,9 @@ def remove_from_playlist(playlist_id: str, track_ids: list[str]) -> dict[str, ob
         playlist_id: The library playlist ID.
         track_ids: List of library track IDs to remove.
     """
-    logger.info("remove_from_playlist playlist_id=%s tracks=%d", playlist_id, len(track_ids))
+    logger.info(
+        "remove_from_playlist playlist_id=%s tracks=%d", playlist_id, len(track_ids)
+    )
     try:
         if not track_ids:
             return {"removed": 0}
@@ -439,7 +461,7 @@ def remove_from_playlist(playlist_id: str, track_ids: list[str]) -> dict[str, ob
         return {"removed": len(track_ids)}
     except Exception as e:
         logger.error("remove_from_playlist failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -463,7 +485,7 @@ def update_playlist(
         return {"updated": True, "playlist_id": playlist_id}
     except Exception as e:
         logger.error("update_playlist failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 @mcp.tool()
@@ -489,7 +511,11 @@ def create_playlist_from_markdown(
         playlist = parse_markdown_text(markdown)
         playlist_name = name or playlist.name
         playlist_desc = description or playlist.description
-        logger.info("parsed %d tracks from markdown, playlist=%r", len(playlist.tracks), playlist_name)
+        logger.info(
+            "parsed %d tracks from markdown, playlist=%r",
+            len(playlist.tracks),
+            playlist_name,
+        )
 
         client = _get_client()
 
@@ -500,17 +526,23 @@ def create_playlist_from_markdown(
             query = track.search_query()
             results = client.search_catalog(query, limit=1, types="songs")
             if results:
-                matched.append({
-                    "artist": track.artist,
-                    "title": track.title,
-                    "catalog_id": results[0]["id"],
-                })
+                matched.append(
+                    {
+                        "artist": track.artist,
+                        "title": track.title,
+                        "catalog_id": results[0]["id"],
+                    }
+                )
                 logger.debug("matched: %s - %s", track.artist, track.title)
             else:
                 not_found.append({"artist": track.artist, "title": track.title})
-                logger.warning("not found: %s - %s (query=%r)", track.artist, track.title, query)
+                logger.warning(
+                    "not found: %s - %s (query=%r)", track.artist, track.title, query
+                )
 
-        logger.info("search complete: %d matched, %d not found", len(matched), len(not_found))
+        logger.info(
+            "search complete: %d matched, %d not found", len(matched), len(not_found)
+        )
 
         if dry_run:
             logger.info("dry run — skipping playlist creation")
@@ -544,7 +576,7 @@ def create_playlist_from_markdown(
         }
     except Exception as e:
         logger.error("create_playlist_from_markdown failed: %s", e)
-        raise ValueError(_handle_api_error(e))
+        raise ValueError(_handle_api_error(e)) from e
 
 
 def main():

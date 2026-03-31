@@ -85,15 +85,15 @@ def _extract_name(lines: list[str]) -> str:
 # Pattern: optional list marker, then "Artist - Title" or "Artist — Title"
 _TRACK_RE = re.compile(
     r"^(?:[-*]|\d+[.)]\s*)\s*"  # list marker (required)
-    r"(.+?)"                     # artist (non-greedy)
-    r"\s+[-–—]\s+"               # separator dash
-    r"(.+)$"                     # title
+    r"(.+?)"  # artist (non-greedy)
+    r"\s+[-\u2013\u2014]\s+"  # separator dash (hyphen, en dash, em dash)
+    r"(.+)$"  # title
 )
 
 _BARE_TRACK_RE = re.compile(
-    r"^(.+?)"       # artist
-    r"\s+[-–—]\s+"  # separator dash
-    r"(.+)$"        # title
+    r"^(.+?)"  # artist
+    r"\s+[-\u2013\u2014]\s+"  # separator dash (hyphen, en dash, em dash)
+    r"(.+)$"  # title
 )
 
 

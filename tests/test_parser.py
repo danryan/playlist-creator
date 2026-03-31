@@ -43,8 +43,8 @@ A relaxing playlist for the evening.
 def test_em_dash_separator():
     md = """# Dashes
 
-- Artist — Title With Em Dash
-- Artist – Title With En Dash
+- Artist \u2014 Title With Em Dash
+- Artist \u2013 Title With En Dash
 """
     playlist = parse_markdown_text(md)
     assert len(playlist.tracks) == 2

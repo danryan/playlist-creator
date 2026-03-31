@@ -11,8 +11,8 @@ from apple_music_mcp.auth import AppleMusicAuth, AppleMusicConfig
 @pytest.fixture
 def config() -> AppleMusicConfig:
     # Minimal EC256 test key (not a real key, just for JWT encoding tests)
-    from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import ec
 
     private_key = ec.generate_private_key(ec.SECP256R1())
     pem = private_key.private_bytes(
@@ -107,7 +107,9 @@ def test_create_playlist(mock_post: MagicMock, client: AppleMusicClient) -> None
 
 @patch("apple_music_mcp.apple_music.requests.get")
 @patch("apple_music_mcp.apple_music.requests.post")
-def test_add_tracks_to_playlist(mock_post: MagicMock, mock_get: MagicMock, client: AppleMusicClient) -> None:
+def test_add_tracks_to_playlist(
+    mock_post: MagicMock, mock_get: MagicMock, client: AppleMusicClient
+) -> None:
     # Mock GET for get_playlist_tracks (returns empty playlist)
     mock_get_resp = MagicMock()
     mock_get_resp.status_code = 404
@@ -125,18 +127,46 @@ def test_add_tracks_to_playlist(mock_post: MagicMock, mock_get: MagicMock, clien
 
 
 SONG_DETAIL_KEYS = {
-    "id", "title", "artist", "album", "duration_ms", "genres", "release_date",
-    "url", "has_lyrics", "preview_url", "artwork_url", "isrc", "composer",
-    "disc_number", "track_number",
+    "id",
+    "title",
+    "artist",
+    "album",
+    "duration_ms",
+    "genres",
+    "release_date",
+    "url",
+    "has_lyrics",
+    "preview_url",
+    "artwork_url",
+    "isrc",
+    "composer",
+    "disc_number",
+    "track_number",
 }
 
 ALBUM_DETAIL_KEYS = {
-    "id", "name", "artist", "genres", "release_date", "track_count", "url",
-    "artwork_url", "record_label", "copyright", "editorial_notes", "tracks",
+    "id",
+    "name",
+    "artist",
+    "genres",
+    "release_date",
+    "track_count",
+    "url",
+    "artwork_url",
+    "record_label",
+    "copyright",
+    "editorial_notes",
+    "tracks",
 }
 
 ARTIST_DETAIL_KEYS = {
-    "id", "name", "genres", "url", "artwork_url", "editorial_notes", "albums",
+    "id",
+    "name",
+    "genres",
+    "url",
+    "artwork_url",
+    "editorial_notes",
+    "albums",
 }
 
 
@@ -152,7 +182,11 @@ def _make_song_response(**overrides: object) -> dict:
         "url": "https://music.apple.com/us/song/999",
         "hasLyrics": False,
         "previews": [{"url": "https://preview.example.com/rhubarb.m4a"}],
-        "artwork": {"url": "https://artwork.example.com/rhubarb.jpg", "width": 3000, "height": 3000},
+        "artwork": {
+            "url": "https://artwork.example.com/rhubarb.jpg",
+            "width": 3000,
+            "height": 3000,
+        },
         "isrc": "GBAFL9400099",
         "composerName": "Richard D. James",
         "discNumber": 1,
@@ -164,7 +198,9 @@ def _make_song_response(**overrides: object) -> dict:
 
 class TestGetSongDetails:
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_maps_key_fields(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_maps_key_fields(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = _make_song_response()
         mock_resp.raise_for_status = MagicMock()
@@ -187,7 +223,9 @@ class TestGetSongDetails:
         assert client.get_song_details("nonexistent") is None
 
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_missing_previews_and_artwork(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_missing_previews_and_artwork(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = _make_song_response(previews=[], artwork={})
         mock_resp.raise_for_status = MagicMock()
@@ -201,31 +239,49 @@ class TestGetSongDetails:
 
 class TestGetAlbumDetails:
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_maps_key_fields_and_tracks(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_maps_key_fields_and_tracks(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
-            "data": [{
-                "id": "888",
-                "type": "albums",
-                "attributes": {
-                    "name": "SAW II",
-                    "artistName": "Aphex Twin",
-                    "genreNames": ["Electronic"],
-                    "releaseDate": "1994-11-07",
-                    "trackCount": 24,
-                    "url": "https://music.apple.com/us/album/888",
-                    "artwork": {"url": "https://artwork.example.com/saw2.jpg", "width": 3000, "height": 3000},
-                    "recordLabel": "Warp Records",
-                    "copyright": "1994 Warp Records",
-                    "editorialNotes": {"standard": "A masterpiece."},
-                },
-                "relationships": {
-                    "tracks": {"data": [{
-                        "id": "999", "type": "songs",
-                        "attributes": {"name": "Rhubarb", "artistName": "Aphex Twin", "durationInMillis": 312000, "trackNumber": 3},
-                    }]}
-                },
-            }]
+            "data": [
+                {
+                    "id": "888",
+                    "type": "albums",
+                    "attributes": {
+                        "name": "SAW II",
+                        "artistName": "Aphex Twin",
+                        "genreNames": ["Electronic"],
+                        "releaseDate": "1994-11-07",
+                        "trackCount": 24,
+                        "url": "https://music.apple.com/us/album/888",
+                        "artwork": {
+                            "url": "https://artwork.example.com/saw2.jpg",
+                            "width": 3000,
+                            "height": 3000,
+                        },
+                        "recordLabel": "Warp Records",
+                        "copyright": "1994 Warp Records",
+                        "editorialNotes": {"standard": "A masterpiece."},
+                    },
+                    "relationships": {
+                        "tracks": {
+                            "data": [
+                                {
+                                    "id": "999",
+                                    "type": "songs",
+                                    "attributes": {
+                                        "name": "Rhubarb",
+                                        "artistName": "Aphex Twin",
+                                        "durationInMillis": 312000,
+                                        "trackNumber": 3,
+                                    },
+                                }
+                            ]
+                        }
+                    },
+                }
+            ]
         }
         mock_resp.raise_for_status = MagicMock()
         mock_get.return_value = mock_resp
@@ -249,18 +305,29 @@ class TestGetAlbumDetails:
         assert client.get_album_details("nonexistent") is None
 
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_no_tracks_relationship(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_no_tracks_relationship(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
-            "data": [{
-                "id": "888",
-                "type": "albums",
-                "attributes": {
-                    "name": "SAW II", "artistName": "Aphex Twin", "genreNames": [],
-                    "releaseDate": "", "trackCount": 0, "url": "", "artwork": {},
-                    "recordLabel": "", "copyright": "", "editorialNotes": {},
-                },
-            }]
+            "data": [
+                {
+                    "id": "888",
+                    "type": "albums",
+                    "attributes": {
+                        "name": "SAW II",
+                        "artistName": "Aphex Twin",
+                        "genreNames": [],
+                        "releaseDate": "",
+                        "trackCount": 0,
+                        "url": "",
+                        "artwork": {},
+                        "recordLabel": "",
+                        "copyright": "",
+                        "editorialNotes": {},
+                    },
+                }
+            ]
         }
         mock_resp.raise_for_status = MagicMock()
         mock_get.return_value = mock_resp
@@ -272,26 +339,43 @@ class TestGetAlbumDetails:
 
 class TestGetArtistDetails:
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_maps_key_fields_and_albums(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_maps_key_fields_and_albums(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
-            "data": [{
-                "id": "777",
-                "type": "artists",
-                "attributes": {
-                    "name": "Aphex Twin",
-                    "genreNames": ["Electronic"],
-                    "url": "https://music.apple.com/us/artist/777",
-                    "artwork": {"url": "https://artwork.example.com/aphex.jpg", "width": 3000, "height": 3000},
-                    "editorialNotes": {"standard": "Pioneering electronic artist."},
-                },
-                "relationships": {
-                    "albums": {"data": [{
-                        "id": "888", "type": "albums",
-                        "attributes": {"name": "SAW II", "artistName": "Aphex Twin", "releaseDate": "1994-11-07"},
-                    }]}
-                },
-            }]
+            "data": [
+                {
+                    "id": "777",
+                    "type": "artists",
+                    "attributes": {
+                        "name": "Aphex Twin",
+                        "genreNames": ["Electronic"],
+                        "url": "https://music.apple.com/us/artist/777",
+                        "artwork": {
+                            "url": "https://artwork.example.com/aphex.jpg",
+                            "width": 3000,
+                            "height": 3000,
+                        },
+                        "editorialNotes": {"standard": "Pioneering electronic artist."},
+                    },
+                    "relationships": {
+                        "albums": {
+                            "data": [
+                                {
+                                    "id": "888",
+                                    "type": "albums",
+                                    "attributes": {
+                                        "name": "SAW II",
+                                        "artistName": "Aphex Twin",
+                                        "releaseDate": "1994-11-07",
+                                    },
+                                }
+                            ]
+                        }
+                    },
+                }
+            ]
         }
         mock_resp.raise_for_status = MagicMock()
         mock_get.return_value = mock_resp
@@ -313,17 +397,24 @@ class TestGetArtistDetails:
         assert client.get_artist_details("nonexistent") is None
 
     @patch("apple_music_mcp.apple_music.requests.get")
-    def test_no_albums_relationship(self, mock_get: MagicMock, client: AppleMusicClient) -> None:
+    def test_no_albums_relationship(
+        self, mock_get: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.json.return_value = {
-            "data": [{
-                "id": "777",
-                "type": "artists",
-                "attributes": {
-                    "name": "Aphex Twin", "genreNames": [], "url": "",
-                    "artwork": {}, "editorialNotes": {},
-                },
-            }]
+            "data": [
+                {
+                    "id": "777",
+                    "type": "artists",
+                    "attributes": {
+                        "name": "Aphex Twin",
+                        "genreNames": [],
+                        "url": "",
+                        "artwork": {},
+                        "editorialNotes": {},
+                    },
+                }
+            ]
         }
         mock_resp.raise_for_status = MagicMock()
         mock_get.return_value = mock_resp
@@ -335,7 +426,9 @@ class TestGetArtistDetails:
 
 class TestRemoveFromPlaylist:
     @patch("apple_music_mcp.apple_music.requests.delete")
-    def test_sends_correct_request(self, mock_delete: MagicMock, client: AppleMusicClient) -> None:
+    def test_sends_correct_request(
+        self, mock_delete: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.raise_for_status = MagicMock()
         mock_delete.return_value = mock_resp
@@ -350,8 +443,11 @@ class TestRemoveFromPlaylist:
         assert body["data"][0] == {"id": "i.track1", "type": "songs"}
 
     @patch("apple_music_mcp.apple_music.requests.delete")
-    def test_http_error_propagates(self, mock_delete: MagicMock, client: AppleMusicClient) -> None:
+    def test_http_error_propagates(
+        self, mock_delete: MagicMock, client: AppleMusicClient
+    ) -> None:
         import requests as req
+
         mock_resp = MagicMock()
         mock_resp.raise_for_status.side_effect = req.HTTPError(response=mock_resp)
         mock_delete.return_value = mock_resp
@@ -362,7 +458,9 @@ class TestRemoveFromPlaylist:
 
 class TestUpdatePlaylist:
     @patch("apple_music_mcp.apple_music.requests.put")
-    def test_sends_both_fields(self, mock_put: MagicMock, client: AppleMusicClient) -> None:
+    def test_sends_both_fields(
+        self, mock_put: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.raise_for_status = MagicMock()
         mock_put.return_value = mock_resp
@@ -374,7 +472,9 @@ class TestUpdatePlaylist:
         assert body["attributes"]["description"] == "New desc"
 
     @patch("apple_music_mcp.apple_music.requests.put")
-    def test_name_only_omits_description(self, mock_put: MagicMock, client: AppleMusicClient) -> None:
+    def test_name_only_omits_description(
+        self, mock_put: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.raise_for_status = MagicMock()
         mock_put.return_value = mock_resp
@@ -386,7 +486,9 @@ class TestUpdatePlaylist:
         assert "description" not in body["attributes"]
 
     @patch("apple_music_mcp.apple_music.requests.put")
-    def test_description_only_omits_name(self, mock_put: MagicMock, client: AppleMusicClient) -> None:
+    def test_description_only_omits_name(
+        self, mock_put: MagicMock, client: AppleMusicClient
+    ) -> None:
         mock_resp = MagicMock()
         mock_resp.raise_for_status = MagicMock()
         mock_put.return_value = mock_resp
@@ -398,8 +500,11 @@ class TestUpdatePlaylist:
         assert "name" not in body["attributes"]
 
     @patch("apple_music_mcp.apple_music.requests.put")
-    def test_http_error_propagates(self, mock_put: MagicMock, client: AppleMusicClient) -> None:
+    def test_http_error_propagates(
+        self, mock_put: MagicMock, client: AppleMusicClient
+    ) -> None:
         import requests as req
+
         mock_resp = MagicMock()
         mock_resp.raise_for_status.side_effect = req.HTTPError(response=mock_resp)
         mock_put.return_value = mock_resp
