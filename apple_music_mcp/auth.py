@@ -36,7 +36,7 @@ class AppleMusicAuth:
             return self._developer_token
 
         expiry = now + 15_777_000  # ~6 months (Apple's max)
-        payload = {
+        payload: dict[str, str | int] = {
             "iss": self.config.team_id,
             "iat": int(now),
             "exp": int(expiry),
