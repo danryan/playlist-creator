@@ -20,13 +20,8 @@ def generate_apple_music_token():
     key_id = os.environ.get("APPLE_KEY_ID", "YOUR_KEY_ID")
     private_key_path = os.environ.get("APPLE_PRIVATE_KEY_PATH", "./AuthKey.p8")
 
-    # Expand ~ in path if present
-    if private_key_path.startswith("~/"):
-        private_key_path = os.path.expanduser(private_key_path)
-
     try:
-        # Read the private key
-        private_key = Path(private_key_path).read_text(encoding="utf-8")
+        private_key = Path(private_key_path).expanduser().read_text(encoding="utf-8")
     except FileNotFoundError:
         print(
             f"Error: Private key file not found at {private_key_path}", file=sys.stderr
@@ -45,9 +40,9 @@ def generate_apple_music_token():
 
     # Override the token expiry to 180 days (as in the Node.js version)
     # We'll generate the token manually to match the Node.js behavior
-    import jwt
-
     from typing import Any
+
+    import jwt
 
     now = time.time()
     payload: dict[str, Any] = {

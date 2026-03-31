@@ -29,7 +29,7 @@ def _build_client() -> AppleMusicClient:
     private_key = os.environ.get("APPLE_PRIVATE_KEY")
 
     if key_path:
-        private_key = Path(os.path.expanduser(key_path)).read_text(encoding="utf-8")
+        private_key = Path(key_path).expanduser().read_text(encoding="utf-8")
     elif not private_key:
         print(
             "Error: APPLE_PRIVATE_KEY or APPLE_PRIVATE_KEY_PATH required",
@@ -109,7 +109,8 @@ def main() -> None:
         help="Parse and display tracks without creating a playlist",
     )
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="store_true",
         help="Show detailed search results",
     )

@@ -7,16 +7,19 @@ readme = "README.md"
 packages = [{include = "apple_music_mcp"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-cryptography = "^41.0"
+python = "^3.13"
+cryptography = "^43.0"
 mcp = "*"
-PyJWT = "^2.8"
-python-dotenv = "^1.2.2"
-requests = "^2.31"
+PyJWT = "^2.12"
+python-dotenv = "^1.0"
+requests = "^2.33"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
+pytest = "^8.0"
+pytest-cov = "*"
 pytest-mock = "^3.0"
+mypy = "*"
+ruff = "*"
 
 [tool.poetry.scripts]
 playlist-creator = "apple_music_mcp.cli:main"
@@ -27,3 +30,33 @@ generate-token-save = "generate_token_save:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM", "PTH", "PERF", "RUF"]
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short --cov=apple_music_mcp"
+
+[tool.coverage.run]
+source = ["apple_music_mcp"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 75

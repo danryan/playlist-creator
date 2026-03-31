@@ -38,8 +38,8 @@ def reset_client_cache():
 @pytest.fixture
 def mock_env(monkeypatch):
     """Set required environment variables for client construction."""
-    from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import ec
 
     private_key = ec.generate_private_key(ec.SECP256R1())
     pem = private_key.private_bytes(
@@ -557,6 +557,7 @@ class TestRemoveFromPlaylist:
 
     def test_api_error_handled(self, mock_env):
         import requests
+
         client = mcp_mod._get_client()
         mock_resp = MagicMock()
         mock_resp.status_code = 401
@@ -572,9 +573,13 @@ class TestUpdatePlaylist:
         client = mcp_mod._get_client()
         with patch.object(client, "update_playlist") as mock_update:
             mcp_mod._client = client
-            result = update_playlist("p.abc123", name="New Name", description="New desc")
+            result = update_playlist(
+                "p.abc123", name="New Name", description="New desc"
+            )
         assert result["updated"] is True
-        mock_update.assert_called_once_with("p.abc123", name="New Name", description="New desc")
+        mock_update.assert_called_once_with(
+            "p.abc123", name="New Name", description="New desc"
+        )
 
     def test_no_changes_raises(self, mock_env):
         with pytest.raises(ValueError, match="at least one"):
@@ -582,6 +587,7 @@ class TestUpdatePlaylist:
 
     def test_api_error_handled(self, mock_env):
         import requests
+
         client = mcp_mod._get_client()
         mock_resp = MagicMock()
         mock_resp.status_code = 429
@@ -589,7 +595,7 @@ class TestUpdatePlaylist:
         error = requests.HTTPError(response=mock_resp)
         with patch.object(client, "update_playlist", side_effect=error):
             mcp_mod._client = client
-            with pytest.raises(ValueError, match="Rate limited.*30 seconds"):
+            with pytest.raises(ValueError, match=r"Rate limited.*30 seconds"):
                 update_playlist("p.abc123", name="X")
 
 
@@ -600,9 +606,7 @@ class TestErrorHandling:
 
         mock_resp = MagicMock()
         mock_resp.status_code = 401
-        mock_resp.raise_for_status.side_effect = requests.HTTPError(
-            response=mock_resp
-        )
+        mock_resp.raise_for_status.side_effect = requests.HTTPError(response=mock_resp)
         mock_get.return_value = mock_resp
 
         with pytest.raises(ValueError, match="User token expired"):
@@ -615,10 +619,8 @@ class TestErrorHandling:
         mock_resp = MagicMock()
         mock_resp.status_code = 429
         mock_resp.headers = {"Retry-After": "30"}
-        mock_resp.raise_for_status.side_effect = requests.HTTPError(
-            response=mock_resp
-        )
+        mock_resp.raise_for_status.side_effect = requests.HTTPError(response=mock_resp)
         mock_get.return_value = mock_resp
 
-        with pytest.raises(ValueError, match="Rate limited.*30 seconds"):
+        with pytest.raises(ValueError, match=r"Rate limited.*30 seconds"):
             search_catalog("test")
