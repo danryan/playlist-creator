@@ -4,6 +4,7 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
+.coverage
 .env
 *.pem
 *.p8
