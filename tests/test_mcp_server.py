@@ -492,193 +492,105 @@ class TestCreatePlaylistFromMarkdown:
 
 
 class TestGetSongDetails:
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_returns_details(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {
-            "data": [
-                {
-                    "id": "999",
-                    "type": "songs",
-                    "attributes": {
-                        "name": "Rhubarb",
-                        "artistName": "Aphex Twin",
-                        "albumName": "SAW II",
-                        "durationInMillis": 312000,
-                        "genreNames": ["Electronic"],
-                        "releaseDate": "1994-11-07",
-                        "url": "https://music.apple.com/us/song/999",
-                        "hasLyrics": False,
-                        "previews": [{"url": "https://preview.example.com/rhubarb.m4a"}],
-                        "artwork": {"url": "https://artwork.example.com/rhubarb.jpg", "width": 3000, "height": 3000},
-                        "isrc": "GBAFL9400099",
-                        "composerName": "Richard D. James",
-                        "discNumber": 1,
-                        "trackNumber": 3,
-                    },
-                }
-            ]
-        }
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    def test_wraps_client_result(self, mock_env):
+        fake_song = {"id": "999", "title": "Rhubarb", "artist": "Aphex Twin"}
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_song_details", return_value=fake_song):
+            mcp_mod._client = client
+            result = get_song_details("999")
+        assert result["song"] == fake_song
 
-        result = get_song_details("999")
-        assert result["song"]["id"] == "999"
-        assert result["song"]["title"] == "Rhubarb"
-
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_not_found(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {"data": []}
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
-
-        result = get_song_details("nonexistent")
+    def test_not_found_returns_error(self, mock_env):
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_song_details", return_value=None):
+            mcp_mod._client = client
+            result = get_song_details("nonexistent")
         assert "error" in result
 
 
 class TestGetAlbumDetails:
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_returns_details(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {
-            "data": [
-                {
-                    "id": "888",
-                    "type": "albums",
-                    "attributes": {
-                        "name": "SAW II",
-                        "artistName": "Aphex Twin",
-                        "genreNames": ["Electronic"],
-                        "releaseDate": "1994-11-07",
-                        "trackCount": 24,
-                        "url": "https://music.apple.com/us/album/888",
-                        "artwork": {"url": "https://artwork.example.com/saw2.jpg", "width": 3000, "height": 3000},
-                        "recordLabel": "Warp Records",
-                        "copyright": "1994 Warp Records",
-                        "editorialNotes": {"standard": "A masterpiece."},
-                    },
-                    "relationships": {
-                        "tracks": {
-                            "data": [
-                                {
-                                    "id": "999",
-                                    "type": "songs",
-                                    "attributes": {
-                                        "name": "Rhubarb",
-                                        "artistName": "Aphex Twin",
-                                        "durationInMillis": 312000,
-                                        "trackNumber": 3,
-                                    },
-                                }
-                            ]
-                        }
-                    },
-                }
-            ]
-        }
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    def test_wraps_client_result(self, mock_env):
+        fake_album = {"id": "888", "name": "SAW II", "tracks": []}
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_album_details", return_value=fake_album):
+            mcp_mod._client = client
+            result = get_album_details("888")
+        assert result["album"] == fake_album
 
-        result = get_album_details("888")
-        assert result["album"]["id"] == "888"
-        assert result["album"]["name"] == "SAW II"
-        assert len(result["album"]["tracks"]) == 1
-
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_not_found(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {"data": []}
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
-
-        result = get_album_details("nonexistent")
+    def test_not_found_returns_error(self, mock_env):
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_album_details", return_value=None):
+            mcp_mod._client = client
+            result = get_album_details("nonexistent")
         assert "error" in result
 
 
 class TestGetArtistDetails:
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_returns_details(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {
-            "data": [
-                {
-                    "id": "777",
-                    "type": "artists",
-                    "attributes": {
-                        "name": "Aphex Twin",
-                        "genreNames": ["Electronic"],
-                        "url": "https://music.apple.com/us/artist/777",
-                        "artwork": {"url": "https://artwork.example.com/aphex.jpg", "width": 3000, "height": 3000},
-                        "editorialNotes": {"standard": "Pioneering electronic artist."},
-                    },
-                    "relationships": {
-                        "albums": {
-                            "data": [
-                                {
-                                    "id": "888",
-                                    "type": "albums",
-                                    "attributes": {
-                                        "name": "SAW II",
-                                        "artistName": "Aphex Twin",
-                                        "releaseDate": "1994-11-07",
-                                    },
-                                }
-                            ]
-                        }
-                    },
-                }
-            ]
-        }
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    def test_wraps_client_result(self, mock_env):
+        fake_artist = {"id": "777", "name": "Aphex Twin", "albums": []}
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_artist_details", return_value=fake_artist):
+            mcp_mod._client = client
+            result = get_artist_details("777")
+        assert result["artist"] == fake_artist
 
-        result = get_artist_details("777")
-        assert result["artist"]["id"] == "777"
-        assert result["artist"]["name"] == "Aphex Twin"
-        assert len(result["artist"]["albums"]) == 1
-
-    @patch("apple_music_mcp.apple_music.requests.get")
-    def test_not_found(self, mock_get, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {"data": []}
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
-
-        result = get_artist_details("nonexistent")
+    def test_not_found_returns_error(self, mock_env):
+        client = mcp_mod._get_client()
+        with patch.object(client, "get_artist_details", return_value=None):
+            mcp_mod._client = client
+            result = get_artist_details("nonexistent")
         assert "error" in result
 
 
 class TestRemoveFromPlaylist:
-    @patch("apple_music_mcp.apple_music.requests.delete")
-    def test_removes_tracks(self, mock_delete, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        mock_delete.return_value = mock_resp
-
-        result = remove_from_playlist("p.abc123", ["i.track1", "i.track2"])
+    def test_returns_count(self, mock_env):
+        client = mcp_mod._get_client()
+        with patch.object(client, "remove_from_playlist") as mock_remove:
+            mcp_mod._client = client
+            result = remove_from_playlist("p.abc123", ["i.track1", "i.track2"])
         assert result["removed"] == 2
-        mock_delete.assert_called_once()
+        mock_remove.assert_called_once_with("p.abc123", ["i.track1", "i.track2"])
 
-    def test_empty_list(self, mock_env):
+    def test_empty_list_skips_client(self, mock_env):
         result = remove_from_playlist("p.abc123", [])
         assert result["removed"] == 0
 
+    def test_api_error_handled(self, mock_env):
+        import requests
+        client = mcp_mod._get_client()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 401
+        error = requests.HTTPError(response=mock_resp)
+        with patch.object(client, "remove_from_playlist", side_effect=error):
+            mcp_mod._client = client
+            with pytest.raises(ValueError, match="User token expired"):
+                remove_from_playlist("p.abc123", ["i.track1"])
+
 
 class TestUpdatePlaylist:
-    @patch("apple_music_mcp.apple_music.requests.put")
-    def test_updates_name_and_description(self, mock_put, mock_env):
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        mock_put.return_value = mock_resp
-
-        result = update_playlist("p.abc123", name="New Name", description="New desc")
+    def test_returns_updated(self, mock_env):
+        client = mcp_mod._get_client()
+        with patch.object(client, "update_playlist") as mock_update:
+            mcp_mod._client = client
+            result = update_playlist("p.abc123", name="New Name", description="New desc")
         assert result["updated"] is True
-        mock_put.assert_called_once()
+        mock_update.assert_called_once_with("p.abc123", name="New Name", description="New desc")
 
-    def test_no_changes(self, mock_env):
+    def test_no_changes_raises(self, mock_env):
         with pytest.raises(ValueError, match="at least one"):
             update_playlist("p.abc123")
+
+    def test_api_error_handled(self, mock_env):
+        import requests
+        client = mcp_mod._get_client()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 429
+        mock_resp.headers = {"Retry-After": "30"}
+        error = requests.HTTPError(response=mock_resp)
+        with patch.object(client, "update_playlist", side_effect=error):
+            mcp_mod._client = client
+            with pytest.raises(ValueError, match="Rate limited.*30 seconds"):
+                update_playlist("p.abc123", name="X")
 
 
 class TestErrorHandling:
